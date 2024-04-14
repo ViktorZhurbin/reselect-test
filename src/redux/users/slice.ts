@@ -5,7 +5,7 @@ export type UsersState = {
 	usersMap: Record<string, User>;
 };
 
-const USERS_COUNT = 10_000;
+const USERS_COUNT = 1_000;
 export const initialState: UsersState = {
 	usersMap: getMockUsersMap({ count: USERS_COUNT }),
 };

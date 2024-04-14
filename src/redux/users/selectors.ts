@@ -1,42 +1,29 @@
-import {
-	lruMemoize,
-	createSelector,
-	createSelectorCreator,
-} from "@reduxjs/toolkit";
+import { createSelector } from "@reduxjs/toolkit";
 import { RootState } from "../rootReducer";
-import { shallowEqual } from "react-redux";
-import { isEqual } from "lodash";
 import { UsersState } from "./slice";
-
-const createShallowEqualResultSelector = createSelectorCreator(lruMemoize, {
-	resultEqualityCheck: shallowEqual,
-});
-const createShallowEqualSelector = createSelectorCreator(lruMemoize, {
-	equalityCheck: shallowEqual,
-	resultEqualityCheck: shallowEqual,
-});
-
-const createDeepEqualResultSelector = createSelectorCreator(lruMemoize, {
-	resultEqualityCheck: isEqual,
-});
-
-const createDeepEqualSelector = createSelectorCreator(lruMemoize, {
-	equalityCheck: isEqual,
-	resultEqualityCheck: isEqual,
-});
+import {
+	selectors,
+	deepEqualMap,
+	deepEqualSelectors,
+	createDeepEqualSelector,
+	createDeepEqualResultSelector,
+} from "../lib";
 
 const selectUsersMap = (state: RootState) => state.users.usersMap;
 
+// USER IDS
 export const selectUserIds = createSelector([selectUsersMap], (usersMap) =>
 	Object.keys(usersMap)
 );
 
 export const selectUserIds__shallowEqualResult =
-	createShallowEqualResultSelector([selectUsersMap], (usersMap) =>
+	selectors.shallowEqualResult.reactRedux([selectUsersMap], (usersMap) =>
 		Object.keys(usersMap)
 	);
 
+// PARTIAL USERS
 const getUsersWithoutModifiedField = (usersMap: UsersState["usersMap"]) =>
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	Object.values(usersMap).map(({ isModified, ...restUser }) => restUser);
 
 export const selectPartialUsers = createSelector(
@@ -45,22 +32,28 @@ export const selectPartialUsers = createSelector(
 );
 
 export const selectPartialUsers__shallowEqualResult =
-	createShallowEqualResultSelector([selectUsersMap], (usersMap) =>
-		Object.values(usersMap).filter((user) => !user.isPumbleBot)
+	selectors.shallowEqualResult.reactRedux(
+		[selectUsersMap],
+		getUsersWithoutModifiedField
 	);
 
-export const selectPartialUsers__shallowEqual = createShallowEqualSelector(
-	[selectUsersMap],
-	getUsersWithoutModifiedField
-);
+export const selectPartialUsers__shallowEqual =
+	selectors.shallowEqual.reactRedux(
+		[selectUsersMap],
+		getUsersWithoutModifiedField
+	);
 
 export const selectPartialUsers__deepEqualResult =
-	createDeepEqualResultSelector([selectUsersMap], getUsersWithoutModifiedField);
+	selectors.deepEqualResult.lodash(
+		[selectUsersMap],
+		getUsersWithoutModifiedField
+	);
 
-export const selectPartialUsers__deepEqual = createDeepEqualSelector(
-	[selectUsersMap],
-	getUsersWithoutModifiedField
-);
+export const selectPartialUsers__deepEqual =
+	deepEqualSelectors.lodashIsEqual.createSelector(
+		[selectUsersMap],
+		getUsersWithoutModifiedField
+	);
 
 // PARTIAL USERS MAP
 const getPartialUsersMap = (usersMap: UsersState["usersMap"]) => {
@@ -81,17 +74,79 @@ export const selectPartialUsersMap = createSelector(
 );
 
 export const selectPartialUsersMap__shallowEqualResult =
-	createShallowEqualResultSelector([selectUsersMap], getPartialUsersMap);
+	selectors.shallowEqualResult.reactRedux([selectUsersMap], getPartialUsersMap);
 
-export const selectPartialUsersMap__shallowEqual = createShallowEqualSelector(
-	[selectUsersMap],
-	getPartialUsersMap
-);
+export const selectPartialUsersMap__shallowEqual =
+	selectors.shallowEqual.reactRedux([selectUsersMap], getPartialUsersMap);
 
 export const selectPartialUsersMap__deepEqualResult =
-	createDeepEqualResultSelector([selectUsersMap], getPartialUsersMap);
+	selectors.deepEqualResult.lodash([selectUsersMap], getPartialUsersMap);
 
-export const selectPartialUsersMap__deepEqual = createDeepEqualSelector(
-	[selectUsersMap],
-	getPartialUsersMap
-);
+export const selectPartialUsersMap__deepEqual =
+	deepEqualSelectors.lodashIsEqual.createSelector(
+		[selectUsersMap],
+		getPartialUsersMap
+	);
+
+const partialUsersMapDeepEqual = deepEqualMap.reduce<
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	Record<string, { libName: string; selector: any }>
+>((acc, { libName, equalityFn }) => {
+	const createSelector = createDeepEqualSelector(equalityFn);
+	const selector = createSelector([selectUsersMap], getPartialUsersMap);
+
+	acc[libName] = { libName, selector };
+
+	return acc;
+}, {});
+
+const partialUsersMapDeepEqualResult = deepEqualMap.reduce<
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	Record<string, { libName: string; selector: any }>
+>((acc, { libName, equalityFn }) => {
+	const createSelector = createDeepEqualResultSelector(equalityFn);
+	const selector = createSelector(
+		[selectUsersMap],
+		getUsersWithoutModifiedField
+	);
+
+	acc[libName] = { libName, selector };
+
+	return acc;
+}, {});
+
+const partialUsersDeepEqual = deepEqualMap.reduce<
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	Record<string, { libName: string; selector: any }>
+>((acc, { libName, equalityFn }) => {
+	const createSelector = createDeepEqualSelector(equalityFn);
+	const selector = createSelector(
+		[selectUsersMap],
+		getUsersWithoutModifiedField
+	);
+
+	acc[libName] = { libName, selector };
+
+	return acc;
+}, {});
+const partialUsersDeepEqualResult = deepEqualMap.reduce<
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	Record<string, { libName: string; selector: any }>
+>((acc, { libName, equalityFn }) => {
+	const createSelector = createDeepEqualResultSelector(equalityFn);
+	const selector = createSelector(
+		[selectUsersMap],
+		getUsersWithoutModifiedField
+	);
+
+	acc[libName] = { libName, selector };
+
+	return acc;
+}, {});
+
+export const usersMapSelectors = {
+	partialUsersMapDeepEqual,
+	partialUsersDeepEqual,
+	partialUsersMapDeepEqualResult,
+	partialUsersDeepEqualResult,
+};

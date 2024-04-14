@@ -2,6 +2,7 @@ import { combineReducers } from "redux";
 
 import { reducer as itemsReducer, ItemsState } from "./items/slice";
 import { reducer as usersReducer, UsersState } from "./users/slice";
+import { configureStore } from "@reduxjs/toolkit";
 
 export type RootState = {
 	items: ItemsState;
@@ -13,4 +14,6 @@ const rootReducer = combineReducers({
 	users: usersReducer,
 });
 
-export default rootReducer;
+const store = configureStore({ reducer: rootReducer });
+
+export { store };

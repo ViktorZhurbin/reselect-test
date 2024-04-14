@@ -6,7 +6,6 @@ import {
 	selectUserIds,
 	selectUserIds__shallowEqualResult,
 	selectPartialUsersMap,
-	selectPartialUsersMap__deepEqual,
 	selectPartialUsersMap__deepEqualResult,
 	selectPartialUsersMap__shallowEqual,
 	selectPartialUsersMap__shallowEqualResult,
@@ -15,6 +14,7 @@ import {
 	selectPartialUsers__deepEqualResult,
 	selectPartialUsers__shallowEqual,
 	selectPartialUsers__shallowEqualResult,
+	usersMapSelectors,
 } from "../../redux/users/selectors";
 
 export const UsersPage = () => {
@@ -86,8 +86,12 @@ export const UsersPage = () => {
 					selector={selectPartialUsersMap__deepEqualResult}
 				/>
 				<Template
-					name="selectPartialUsersMap__deepEqual"
-					selector={selectPartialUsersMap__deepEqual}
+					name={
+						usersMapSelectors.partialUsersMapDeepEqual.lodashIsEqual.libName
+					}
+					selector={
+						usersMapSelectors.partialUsersMapDeepEqual.lodashIsEqual.selector
+					}
 				/>
 			</div>
 		</section>
