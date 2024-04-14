@@ -15,9 +15,9 @@ export const deepEqualMap = [
 ] as const;
 
 export const createDeepEqualSelector = (
-	equalityFn: LruMemoizeOptions["equalityCheck"]
+	equalityFn: LruMemoizeOptions["equalityCheck"] = lodashIsEqual
 ) =>
-	createSelectorFromOptions({
+	createSelectorCreator(lruMemoize, {
 		equalityCheck: equalityFn,
 		resultEqualityCheck: equalityFn,
 	});
@@ -25,11 +25,9 @@ export const createDeepEqualSelector = (
 export const createDeepEqualResultSelector = (
 	equalityFn: LruMemoizeOptions["equalityCheck"]
 ) =>
-	createSelectorFromOptions({
+	createSelectorCreator(lruMemoize, {
 		resultEqualityCheck: equalityFn,
 	});
-
-export type T = ReturnType<typeof createDeepEqualSelector>;
 
 export const selectors = {
 	shallowEqualResult: {
@@ -54,43 +52,18 @@ export const selectors = {
 			resultEqualityCheck: reactFastCompare,
 		}),
 	},
-};
-
-export const createSelectorEntryFromOptions = (params: {
-	libName: string;
-	memoizeOptions: LruMemoizeOptions;
-}) => {
-	const { libName, memoizeOptions } = params;
-
-	const createSelector = createSelectorCreator(lruMemoize, memoizeOptions);
-	return {
-		libName,
-		createSelector,
-	};
-};
-
-export const deepEqualSelectors = {
-	lodashIsEqual: createSelectorEntryFromOptions({
-		libName: "lodashIsEqual",
-		memoizeOptions: {
+	deepEqual: {
+		lodash: createSelectorFromOptions({
 			equalityCheck: lodashIsEqual,
 			resultEqualityCheck: lodashIsEqual,
-		},
-	}),
-
-	// fastEquals: {
-	// 	libName: "fastEquals",
-	// 	createSelector: createSelectorFromOptions({
-	// 		equalityCheck: fastEquals.deepEqual,
-	// 		resultEqualityCheck: fastEquals.deepEqual,
-	// 	}),
-	// },
-
-	// reactFastCompare: {
-	// 	libName: "reactFastCompare",
-	// 	createSelector: createSelectorFromOptions({
-	// 		equalityCheck: reactFastCompare,
-	// 		resultEqualityCheck: reactFastCompare,
-	// 	}),
-	// },
+		}),
+		fastEquals: createSelectorFromOptions({
+			equalityCheck: fastEquals.deepEqual,
+			resultEqualityCheck: fastEquals.deepEqual,
+		}),
+		reactFastCompare: createSelectorFromOptions({
+			equalityCheck: reactFastCompare,
+			resultEqualityCheck: reactFastCompare,
+		}),
+	},
 };

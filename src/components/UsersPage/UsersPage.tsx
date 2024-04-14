@@ -5,17 +5,16 @@ import { updateRandomUserName } from "../../redux/users/slice";
 import {
 	selectUserIds,
 	selectUserIds__shallowEqualResult,
+	selectPartialUsers,
+	selectPartialUsers__deepEqualResult,
+	selectPartialUsers__deepEqual,
 	selectPartialUsersMap,
 	selectPartialUsersMap__deepEqualResult,
-	selectPartialUsersMap__shallowEqual,
-	selectPartialUsersMap__shallowEqualResult,
-	selectPartialUsers,
-	selectPartialUsers__deepEqual,
-	selectPartialUsers__deepEqualResult,
-	selectPartialUsers__shallowEqual,
-	selectPartialUsers__shallowEqualResult,
-	usersMapSelectors,
+	selectPartialUsersMap__deepEqual,
 } from "../../redux/users/selectors";
+import { USERS_COUNT } from "../../constants/users";
+
+const numberFormat = new Intl.NumberFormat();
 
 export const UsersPage = () => {
 	const dispatch = useDispatch();
@@ -27,13 +26,14 @@ export const UsersPage = () => {
 	return (
 		<section>
 			<div>
-				<h3>Selector Recomputations</h3>
+				<h3>Number of users: {numberFormat.format(USERS_COUNT)}</h3>
 
 				<button onClick={modifyRandomUser}>Modify random user</button>
 
 				<br />
 				<br />
 
+				<h3>Selector Recomputations</h3>
 				<h4>UserId[]</h4>
 				<Template name="selectUserIds" selector={selectUserIds} />
 				<Template
@@ -46,14 +46,14 @@ export const UsersPage = () => {
 				<h4>User[] - without isModified property</h4>
 				<Template name="selectPartialUsers" selector={selectPartialUsers} />
 				<br />
-				<Template
+				{/* <Template
 					name="selectPartialUsers__shallowEqualResult"
 					selector={selectPartialUsers__shallowEqualResult}
 				/>
 				<Template
 					name="selectPartialUsers__shallowEqual"
 					selector={selectPartialUsers__shallowEqual}
-				/>
+				/> */}
 				<br />
 				<Template
 					name="selectPartialUsers__deepEqualResult"
@@ -72,26 +72,22 @@ export const UsersPage = () => {
 					selector={selectPartialUsersMap}
 				/>
 				<br />
-				<Template
+				{/* <Template
 					name="selectPartialUsersMap__shallowEqualResult"
 					selector={selectPartialUsersMap__shallowEqualResult}
 				/>
 				<Template
 					name="selectPartialUsersMap__shallowEqual"
 					selector={selectPartialUsersMap__shallowEqual}
-				/>
+				/> */}
 				<br />
 				<Template
 					name="selectPartialUsersMap__deepEqualResult"
 					selector={selectPartialUsersMap__deepEqualResult}
 				/>
 				<Template
-					name={
-						usersMapSelectors.partialUsersMapDeepEqual.lodashIsEqual.libName
-					}
-					selector={
-						usersMapSelectors.partialUsersMapDeepEqual.lodashIsEqual.selector
-					}
+					name="selectPartialUsersMap__deepEqual"
+					selector={selectPartialUsersMap__deepEqual}
 				/>
 			</div>
 		</section>

@@ -14,7 +14,7 @@ export const Template = ({
 		const t1 = performance.now();
 
 		const timeMs = (t1 - t0).toFixed(2);
-		console.log(`${name} took ${timeMs} milliseconds.`);
+		console.log({ [name]: `${timeMs} ms` });
 
 		return result;
 	});

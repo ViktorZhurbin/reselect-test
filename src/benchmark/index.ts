@@ -1,6 +1,6 @@
 import { Bench } from "tinybench";
-import { store } from "../redux/rootReducer.js";
-import { usersMapSelectors } from "../redux/users/selectors.js";
+import { store } from "../redux/store";
+import { usersMapSelectors } from "./selectors";
 
 console.log("");
 

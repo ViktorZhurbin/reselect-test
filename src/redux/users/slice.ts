@@ -1,11 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { User, getMockUsersMap } from "./mocks";
+import { USERS_COUNT } from "../../constants/users";
 
 export type UsersState = {
 	usersMap: Record<string, User>;
 };
 
-const USERS_COUNT = 1_000;
 export const initialState: UsersState = {
 	usersMap: getMockUsersMap({ count: USERS_COUNT }),
 };
